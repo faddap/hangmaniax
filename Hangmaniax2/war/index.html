@@ -13,6 +13,75 @@
   </head>
 
   <body>
-    <h1>Almost there, pal..</h1>
+    <div id='topDecorationLine'></div>
+    <div id='wrapper'>
+	    <header>
+	    	<h1 id='brandBox'>hangmaniax</h1>
+	    	<nav>
+	    		<a href='#'>about</a>
+	    		<a href='#'>how to play</a>
+	    		<a href='#'>add a word</a>
+	    		<a href='#'>signUp!</a>
+	    	</nav>
+	    	<div id='authBox'>
+	    		<form name='login' id='loginForm' method='POST' action=''>
+	    			<input type='text' name='username' placeholder='username' class='textFld' />
+	    			<input type='password' name='password' placeholder='password' class='textFld' />
+	    			<input type='submit' id='submitBtn' name='loginSubmit' />
+	    		</form>
+	    	</div>
+	    </header>
+	    
+	    <div id='content'>
+	    	<div id='leftColumn'>
+		    	<div id='letterBox'>
+		    		<div class='letterLine'>
+			    		<a href='#'>q</a>
+			    		<a href='#'>w</a>
+			    		<a href='#'>e</a>
+			    		<a href='#'>r</a>
+			    		<a href='#'>t</a>
+			    		<a href='#'>y</a>
+			    		<a href='#'>u</a>
+			    		<a href='#'>i</a>
+			    		<a href='#'>o</a>
+			    		<a href='#'>p</a>
+		    		</div>
+		    		<div class='letterLine'>
+			    		<a href='#'>a</a>
+			    		<a href='#'>s</a>
+			    		<a href='#'>d</a>
+			    		<a href='#'>f</a>
+			    		<a href='#'>g</a>
+			    		<a href='#'>h</a>
+			    		<a href='#'>j</a>
+			    		<a href='#'>k</a>
+			    		<a href='#'>l</a>
+		    		</div>
+		    		<div class='letterLine'>
+			    		<a href='#'>z</a>
+			    		<a href='#'>x</a>
+			    		<a href='#'>c</a>
+			    		<a href='#'>v</a>
+			    		<a href='#'>b</a>
+			    		<a href='#'>n</a>
+			    		<a href='#'>m</a>
+		    		</div>
+		    	</div>
+	    	</div>
+	    	<div id='rightColumn'>
+	    		<form name='wordIn' id='wordInForm' method='POST'>
+	    			<input type='text' name='word' placeholder='propose a word' class='textFld' />
+	    		</form>
+	    		<canvas id='hangmann'>
+	    			
+	    		</canvas>
+	    	</div>
+	    </div>
+	    
+	    <footer>
+	    	
+	    </footer>
+    </div>
   </body>
 </html>
