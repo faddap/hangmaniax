@@ -9,5 +9,6 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			throws IOException {
 		resp.setContentType("text/plain");
 		resp.getWriter().println("Hello, world");
+		resp.getWriter().println("Nasko was here!");
 	}
 }
