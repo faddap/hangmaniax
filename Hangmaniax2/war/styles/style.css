@@ -87,6 +87,7 @@ div#content div#leftColumn div#letterBox .letterLine a {
 	border: 1px solid #DD0B00;
 	border-radius: 5px;
 	text-decoration: none;
+	text-transform: uppercase;
 	color: #017B86;
 	margin: 8px;
 	font-weight: 900;
