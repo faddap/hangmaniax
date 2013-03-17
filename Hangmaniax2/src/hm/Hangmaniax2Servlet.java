@@ -25,7 +25,10 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			
 			JSONObject jsonReq = new JSONObject(reqStr);
 			JSONObject jsonParams = jsonReq.has("params") ? jsonReq.optJSONObject("params") : null;
-			if (jsonReq.has("method") && jsonReq.optString("method").equals("login")) {
+			if (jsonReq.has("method") && "login".equals(jsonReq.optString("method"))) {
+				jsonResp = new JSONObject("{'success': true}");
+				jsonResp.put("credentials", jsonParams);
+			} else if (jsonReq.has("method") && "signup".equals(jsonReq.optString("method"))) {
 				jsonResp = new JSONObject("{'success': true}");
 				jsonResp.put("credentials", jsonParams);
 			}
