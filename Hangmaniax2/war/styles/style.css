@@ -100,6 +100,34 @@ div#content div#leftColumn div#letterBox .letterLine a {
 div#content div#leftColumn div#letterBox .letterLine a:hover {
 	background-color: #DD0B00;
 }
+div#content div#leftColumn div#spanner {
+	height: 250px;
+}
+div#content div#leftColumn div#wordContainer {
+	
+}
+div#content div#leftColumn div#wordContainer a#startGame {
+	display: block;
+	text-transform: uppercase;
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: 900;
+	padding: 15px 5px;
+	text-decoration: none;
+	//color: #017B86;
+	border-radius: 5px;
+	border: 1px solid #DD0B00;
+	background-color: #DD0B00;
+	color: white;
+	
+	transition: background-color .5s;
+	-moz-transition: background-color .5s; /* Firefox 4 */
+	-webkit-transition: background-color .5s; /* Safari and Chrome */
+	-o-transition: background-color .5s; /* Opera */
+}
+div#content div#leftColumn div#wordContainer a#startGame:hover {
+	//background-color: #DD0B00;
+}
 div#content div#rightColumn {
 	float: right;
 	vertical-align: top;

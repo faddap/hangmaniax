@@ -59,4 +59,10 @@ public class Word {
 	 */
 	@Persistent
 	private int guessed = 0;
+	
+	/**
+	 * The user, owning the word
+	 */
+	@Persistent
+	private User user = null;
 }

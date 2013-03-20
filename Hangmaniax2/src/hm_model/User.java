@@ -69,7 +69,7 @@ public class User {
 	/**
 	 * All the words, entered by the user
 	 */
-	@Persistent
+	@Persistent(mappedBy = "user")
 	private List<Word> words = null;
 	
 	public User(String name, String email, String pass) {
