@@ -11,7 +11,7 @@ $('document').ready(function() {
 	$('form#loginForm').bind({
 		'submit': function(e) {
 			e.preventDefault();
-			var cr = {username: this.username.value, password: this.password.value};
+			var cr = {email: this.email.value, password: this.password.value};
 			sendJsonRPC('login', cr, onLoginSucceeded);
 		}
 	});

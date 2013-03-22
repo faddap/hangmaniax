@@ -3,12 +3,11 @@ package hm_model;
 import java.util.Date;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
-import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
 public class User {
@@ -28,7 +27,8 @@ public class User {
 	 */
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key key = null;
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String encodedKey = null;
     
 	/**
 	 * User's username
@@ -40,6 +40,7 @@ public class User {
 	 * User's email
 	 */
 	@Persistent
+	@Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String email = null;
 	
 	/**
@@ -64,7 +65,7 @@ public class User {
 	 * User's role
 	 */
 	@Persistent
-	private final Role role = Role.PLAYER;
+	private Role role = Role.PLAYER;
 	
 	/**
 	 * All the words, entered by the user
@@ -76,6 +77,14 @@ public class User {
 		this.name = name;
 		this.email = email;
 		this.pass = pass;
+	}
+	
+	/**
+	 * Sets User's key.
+	 * @param key
+	 */
+	public void setKey(String key) {
+		this.encodedKey = key;
 	}
 
 	public String getName() {
@@ -89,7 +98,7 @@ public class User {
 	public String getEmail() {
 		return email;
 	}
-
+	
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -118,12 +127,12 @@ public class User {
 		this.gamesPlayed = gamesPlayed;
 	}
 
-	public Key getKey() {
-		return key;
-	}
-
 	public Role getRole() {
 		return role;
+	}
+	
+	public void setRole(Role r) {
+		this.role = r;
 	}
 
 	public List<Word> getWords() {

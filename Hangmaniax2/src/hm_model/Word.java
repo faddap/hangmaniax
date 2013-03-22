@@ -1,11 +1,10 @@
 package hm_model;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
-import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
 public class Word {
@@ -22,12 +21,14 @@ public class Word {
 	 */
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key key = null;
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String encodedKey = null;
 	
 	/**
 	 * The actual word
 	 */
 	@Persistent
+	@Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String body = null;
 	
 	/**
@@ -65,4 +66,8 @@ public class Word {
 	 */
 	@Persistent
 	private User user = null;
+	
+	public void setKey(String encodedKey) {
+		this.encodedKey = encodedKey;
+	}
 }
