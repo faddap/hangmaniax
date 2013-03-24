@@ -51,6 +51,7 @@ public class Hangmaniax2Servlet extends HttpServlet {
 						session.setMaxInactiveInterval(10*60);
 						session.setAttribute("name", loggedIn.getName());
 						session.setAttribute("score", loggedIn.getScore());
+						//change to test git push
 						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
 					} else {
 						jsonResp = JsonRPCResponse.buildErrorResponse(1, "Wrong password!");
