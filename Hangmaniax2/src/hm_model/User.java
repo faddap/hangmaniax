@@ -68,6 +68,11 @@ public class User {
 	private Role role = Role.PLAYER;
 	
 	/**
+	 * User's score
+	 */
+	@Persistent
+	private int score = 0;
+	/**
 	 * All the words, entered by the user
 	 */
 	@Persistent(mappedBy = "user")
@@ -141,5 +146,13 @@ public class User {
 	
 	public void addWord(Word w) {
 		this.words.add(w);
+	}
+	
+	public void addPoints(int p) {
+		this.score += p;
+	}
+	
+	public int getScore() {
+		return this.score;
 	}
 }
