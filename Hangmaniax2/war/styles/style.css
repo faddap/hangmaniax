@@ -126,9 +126,6 @@ div#content div#leftColumn div#wordContainer a#startGame {
 	-webkit-transition: background-color .5s; /* Safari and Chrome */
 	-o-transition: background-color .5s; /* Opera */
 }
-div#content div#leftColumn div#wordContainer a#startGame:hover {
-	//background-color: #DD0B00;
-}
 div#content div#rightColumn {
 	float: right;
 	vertical-align: top;
