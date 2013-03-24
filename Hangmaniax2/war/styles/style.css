@@ -92,10 +92,10 @@ div#content div#leftColumn div#letterBox .letterLine a {
 	margin: 8px;
 	font-weight: 900;
 	
-	transition: background-color .5s;
-	-moz-transition: background-color .5s; /* Firefox 4 */
-	-webkit-transition: background-color .5s; /* Safari and Chrome */
-	-o-transition: background-color .5s; /* Opera */
+	transition: background-color .2s;
+	-moz-transition: background-color .2s; /* Firefox 4 */
+	-webkit-transition: background-color .2s; /* Safari and Chrome */
+	-o-transition: background-color .2s; /* Opera */
 }
 div#content div#leftColumn div#letterBox .letterLine a:hover {
 	background-color: #DD0B00;
@@ -135,4 +135,9 @@ div#content div#rightColumn form {
 }
 div#content div#rightColumn canvas#hangmann {
 	border: 1px solid #DD0B00;
+}
+
+.keyboardKeyDown{
+    background-color: #DD0B00;
+    box-shadow: 2px 2px #CCCCCC;
 }

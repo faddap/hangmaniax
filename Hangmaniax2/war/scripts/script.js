@@ -60,4 +60,16 @@ $('document').ready(function() {
 		}).css('margin-top', '10px');
 		$signupDialog.dialog('open');
 	});
+	
+	$("body").keydown(function(e) {
+        var key = e.keyCode;
+        $("#" + key).addClass("keyboardKeyDown");
+	    }    
+	);
+	
+	$("body").keyup(function(e) {
+	        var key = e.keyCode;
+	        $("#" + key).removeClass("keyboardKeyDown");
+	    }    
+	);
 });
