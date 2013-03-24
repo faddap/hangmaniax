@@ -99,6 +99,7 @@ div#content div#leftColumn div#letterBox .letterLine a {
 }
 div#content div#leftColumn div#letterBox .letterLine a:hover {
 	background-color: #DD0B00;
+	color: #FFFFFF;
 }
 div#content div#leftColumn div#spanner {
 	height: 250px;
