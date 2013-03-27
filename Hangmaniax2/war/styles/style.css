@@ -57,6 +57,9 @@ header div#authBox {
 header div#authBox input[type=submit] {
 	display: none;
 }
+header div#authBox div#userDetails {
+	display: none;
+}
 input.textFld {
 	display: block;
 	border: 1px solid #DD0B00;

@@ -51,7 +51,6 @@ public class Hangmaniax2Servlet extends HttpServlet {
 						session.setMaxInactiveInterval(10*60);
 						session.setAttribute("name", loggedIn.getName());
 						session.setAttribute("score", loggedIn.getScore());
-						//change to test git push
 						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
 					} else {
 						jsonResp = JsonRPCResponse.buildErrorResponse(1, "Wrong password!");
@@ -85,6 +84,16 @@ public class Hangmaniax2Servlet extends HttpServlet {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'method': 'signup'}");
 				} finally {
 					pm.close();
+				}
+			} else if (jsonReq.has("method") && "logout".equals(jsonReq.optString("method"))) {
+				req.getSession().invalidate();
+				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
+			} else if (jsonReq.has("method") && "checkSession".equals(jsonReq.optString("method"))) {
+				HttpSession session = req.getSession();
+				if (session != null && session.getAttribute("name") != null && session.getAttribute("score") != null) {
+					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
+				} else {
+					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': false}");
 				}
 			}
 			
