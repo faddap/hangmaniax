@@ -1,5 +1,6 @@
 package hm_model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class User {
+public class User implements Serializable {
 	/**
 	 * @author vatov
 	 */

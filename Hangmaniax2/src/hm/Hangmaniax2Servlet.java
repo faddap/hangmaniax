@@ -1,9 +1,11 @@
 package hm;
 
+import hm_model.Game;
 import hm_model.JsonRPCResponse;
 import hm_model.PMF;
 import hm_model.User;
 import hm_model.JsonRPCResponse.ErrorCode;
+import hm_model.Word;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,6 +51,7 @@ public class Hangmaniax2Servlet extends HttpServlet {
 					if (loggedIn.getPass().equals(pass)) {
 						HttpSession session = req.getSession();
 						session.setMaxInactiveInterval(10*60);
+						session.setAttribute("email", loggedIn.getEmail());
 						session.setAttribute("name", loggedIn.getName());
 						session.setAttribute("score", loggedIn.getScore());
 						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
@@ -95,6 +98,32 @@ public class Hangmaniax2Servlet extends HttpServlet {
 				} else {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': false}");
 				}
+			} else if (jsonReq.has("method") && "startGame".equals(jsonReq.optString("method"))) {
+				HttpSession session = req.getSession();
+				if (session.getAttribute("email") != null) {
+					PersistenceManager pm = PMF.get().getPersistenceManager();
+					
+					try {
+						User player = pm.getObjectById(User.class, session.getAttribute("email"));
+						//TODO: Draw random word
+						Word word = new Word("occurrence");
+						Game game = new Game(player, word);
+						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'length': 10}");
+						session.setAttribute("game", game);
+					} catch (JDOException e) {
+						jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+					} finally {
+						pm.close();
+					}
+				} else {
+					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "Invalid session!");
+				}
+			} else if (jsonReq.has("method") && "letterSubmit".equals(jsonReq.optString("method"))) {
+				//TODO: obtain letter and and give it to the game instance
+				HttpSession session = req.getSession();
+				Game game = (Game) session.getAttribute("game");
+				System.out.print(session);
+				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
 			}
 			
 			wr.write(jsonResp.toString());

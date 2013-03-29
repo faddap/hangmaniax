@@ -59,6 +59,22 @@ $('document').ready(function() {
 		}
 	});
 	
+	//handle game start
+	$('a#startGame').bind({
+		'click': function(e) {
+			e.preventDefault();
+			sendJsonRPC('startGame', {}, onStartGame);
+		}
+	});
+	
+	//handle letter submition
+	$('div#letterBox a').bind({
+		'click': function(e) {
+			e.preventDefault();
+			sendJsonRPC('letterSubmit', {}, onLetterSubmitted);
+		}
+	});
+	
 	function responseIsSuccessful(resp) {
 		return resp.result != undefined && resp.result.success != undefined && resp.result.success === true;
 	};
@@ -107,6 +123,14 @@ $('document').ready(function() {
 			$userDetails.hide();
 			$loginForm.show();
 		}
+	};
+	
+	function onStartGame(resp) {
+		console.log(resp);
+	};
+	
+	function onLetterSubmitted(resp) {
+		console.log(resp);
 	};
 	
 	function onAjaxError(data) {

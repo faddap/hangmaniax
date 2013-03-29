@@ -1,5 +1,7 @@
 package hm_model;
 
+import java.io.Serializable;
+
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -7,7 +9,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Word {
+public class Word implements Serializable {
 	/**
 	 * @author vatov
 	 */
@@ -66,6 +68,15 @@ public class Word {
 	 */
 	@Persistent
 	private User user = null;
+	
+	public Word(String body) {
+		this.body = body.toLowerCase();
+	}
+	
+	public Word(String body, String descr) {
+		this.body = body.toLowerCase();
+		this.descr = descr;
+	}
 	
 	public void setKey(String encodedKey) {
 		this.encodedKey = encodedKey;
