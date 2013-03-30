@@ -101,29 +101,41 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			} else if (jsonReq.has("method") && "startGame".equals(jsonReq.optString("method"))) {
 				HttpSession session = req.getSession();
 				if (session.getAttribute("email") != null) {
-					PersistenceManager pm = PMF.get().getPersistenceManager();
-					
-					try {
-						User player = pm.getObjectById(User.class, session.getAttribute("email"));
-						//TODO: Draw random word
-						Word word = new Word("occurrence");
-						Game game = new Game(player, word);
-						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'length': 10}");
-						session.setAttribute("game", game);
-					} catch (JDOException e) {
-						jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
-					} finally {
-						pm.close();
-					}
+					//TODO: Draw random word
+					String email = (String) session.getAttribute("email");
+					Word word = new Word("occurrence");
+					Game game = new Game(email, word);
+					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'length': 10}");
+					session.setAttribute("game", game);
 				} else {
 					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "Invalid session!");
 				}
 			} else if (jsonReq.has("method") && "letterSubmit".equals(jsonReq.optString("method"))) {
+				
 				//TODO: obtain letter and and give it to the game instance
 				HttpSession session = req.getSession();
 				Game game = (Game) session.getAttribute("game");
 				System.out.print(session);
 				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
+				
+				//TODO: increment word's <code>played</code> field
+				if (game.isWin() || game.isLoss()) {
+					PersistenceManager pm = PMF.get().getPersistenceManager();
+					//TODO: increment word's <code>guessed</code> field
+					String playerEmail = game.getEmail();
+					try {
+						User player = pm.getObjectById(User.class, playerEmail);
+						if (game.isWin()) {
+							player.addPoints(game.getPointsForTheGame());
+						} else {
+							//TODO: act accordingly
+						}
+					} catch (JDOException e) {
+						jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+					} finally {
+						pm.close();
+					}
+				}
 			}
 			
 			wr.write(jsonResp.toString());

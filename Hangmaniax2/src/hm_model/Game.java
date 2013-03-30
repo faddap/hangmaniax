@@ -10,9 +10,9 @@ public class Game implements Serializable {
 	private final static int DEFAULT_POINTS = 30;
 	private final static int POINTS_WITH_DESCRIPTION = 10;
 	
-	private User player = null;
-	private Word word = null;
-	private User askedBy = null;
+	private String email = "";
+	private String word = "";
+	private String askerEmail = "";
 	
 	private TurnOutcome lastOutcome = null;
 	private int pointsForTheGame = DEFAULT_POINTS;
@@ -20,19 +20,17 @@ public class Game implements Serializable {
 	private char[] lettersLeft = null;
 	private LinkedHashSet<Character> lettersSubmitted = null;
 	
-	public Game(User pl, Word w) {
-		this.player = pl;
-		this.word = w;
+	public Game(String email, Word w) {
+		this.email = email;
 		
-		//TODO: init all needed variables
+		//TODO: init all needed variables using w
 	}
 	
-	public Game(User pl, Word w, User askedBy) {
-		this.player = pl;
-		this.word = w;
-		this.askedBy = askedBy;
+	public Game(String email, Word w, String askedByEmail) {
+		this.email = email;
+		this.askerEmail = askedByEmail;
 		
-		//TODO: init all needed variables
+		//TODO: init all needed variables using w
 	}
 	
 	public TurnOutcome turn(char letterSubmitted) {
@@ -56,16 +54,6 @@ public class Game implements Serializable {
 			//submitted letter has been already present, so return an erroneous response
 			this.lastOutcome = new TurnOutcome(ch.charValue(), false);
 			this.lastOutcome.setErroneous();
-		}
-		
-		if (this.isWin() || this.isLoss()) {
-			//TODO: increment word's <code>played</code> field
-			if (this.isWin()) {
-				//TODO: increment word's <code>guessed</code> field
-				this.player.addPoints(this.pointsForTheGame);
-			} else if (User.class.isInstance(this.askedBy)) {
-				this.askedBy.addPoints(this.pointsForTheGame);
-			}
 		}
 		
 		return this.lastOutcome;
@@ -134,5 +122,13 @@ public class Game implements Serializable {
 		//TODO: get the description from the word
 		
 		return descr;
+	}
+	
+	public String getEmail() {
+		return this.email;
+	}
+	
+	public String getWord() {
+		return this.word;
 	}
 }
