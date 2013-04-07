@@ -93,6 +93,16 @@ public class Hangmaniax2Servlet extends HttpServlet {
 				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
 			} else if (jsonReq.has("method") && "checkSession".equals(jsonReq.optString("method"))) {
 				HttpSession session = req.getSession();
+				//TODO: remove that
+				Word w = new Word("cat");
+				PersistenceManager pm = PMF.get().getPersistenceManager();
+				try {
+					pm.makePersistent(w);
+				} catch(JDOException e) {
+					jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+				} finally {
+					pm.close();
+				}
 				if (session != null && session.getAttribute("name") != null && session.getAttribute("score") != null) {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
 				} else {

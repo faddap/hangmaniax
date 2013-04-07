@@ -19,18 +19,15 @@ public class Word implements Serializable {
 	public enum PartOfSpeech { NOUN, VERB, ADJECTIVE}
 	
 	/**
-	 * Primary key
+	 * ID
 	 */
-	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String encodedKey = null;
+	@Persistent(valueStrategy = IdGeneratorStrategy.SEQUENCE)
+	private long id;
 	
 	/**
 	 * The actual word
 	 */
-	@Persistent
-	@Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
+	@PrimaryKey
 	private String body = null;
 	
 	/**
@@ -76,9 +73,5 @@ public class Word implements Serializable {
 	public Word(String body, String descr) {
 		this.body = body.toLowerCase();
 		this.descr = descr;
-	}
-	
-	public void setKey(String encodedKey) {
-		this.encodedKey = encodedKey;
 	}
 }
