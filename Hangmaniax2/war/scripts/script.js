@@ -75,6 +75,15 @@ $('document').ready(function() {
 		}
 	});
 	
+	//handle word input
+	$('form#wordInForm').bind({
+		'submit': function(e) {
+			e.preventDefault();
+			var reqObj = {word: this.word.value};
+			sendJsonRPC('wordSubmit', reqObj, onWordAdded);
+		}
+	});
+	
 	function responseIsSuccessful(resp) {
 		return resp.result != undefined && resp.result.success != undefined && resp.result.success === true;
 	};
@@ -130,6 +139,10 @@ $('document').ready(function() {
 	};
 	
 	function onLetterSubmitted(resp) {
+		console.log(resp);
+	};
+	
+	function onWordAdded(resp) {
 		console.log(resp);
 	};
 	

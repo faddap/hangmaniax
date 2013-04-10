@@ -9,14 +9,16 @@ import hm_model.Word;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.servlet.http.*;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-//import com.google.appengine.api.datastore.Query;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
@@ -93,16 +95,31 @@ public class Hangmaniax2Servlet extends HttpServlet {
 				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
 			} else if (jsonReq.has("method") && "checkSession".equals(jsonReq.optString("method"))) {
 				HttpSession session = req.getSession();
-				//TODO: remove that
-				Word w = new Word("cat");
+				
+				//TODO: test only
 				PersistenceManager pm = PMF.get().getPersistenceManager();
+				//Query q = pm.newQuery(Word.class);
+				/*
+				q.setFilter("id <= idParam");
+				q.declareParameters("long idParam");
+				q.setRange(0, 1);
+				*/
+				//q.setOrdering("id desc");
+				//q.setRange(0,1);
 				try {
-					pm.makePersistent(w);
+					//List<Word> words = (List<Word>) q.execute(6);
+					//List<Word> words = (List<Word>) q.execute();
+					//System.out.println(words.get(0));
+					Word rand = Word.getRandom(pm);
+					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': 'true', 'word': "+rand.toString()+"}");
+					System.out.println(rand);
 				} catch(JDOException e) {
-					jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+					jsonResp = JsonRPCResponse.buildErrorResponse(0, "Bad JDO!");
 				} finally {
-					pm.close();
+					//q.closeAll();
+					//pm.close();
 				}
+				
 				if (session != null && session.getAttribute("name") != null && session.getAttribute("score") != null) {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
 				} else {
@@ -145,6 +162,22 @@ public class Hangmaniax2Servlet extends HttpServlet {
 					} finally {
 						pm.close();
 					}
+				}
+			} else if (jsonReq.has("method") && "wordSubmit".equals(jsonReq.optString("method"))) {
+				String word = jsonParams.optString("word");
+				if (word != null && !"".equals(word)) {
+					PersistenceManager pm = PMF.get().getPersistenceManager();
+					Word w = new Word(word);
+					try {
+						pm.makePersistent(w);
+						jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': 'true', 'id': "+w.getId()+"}");
+					} catch(JDOException e) {
+						jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+					} finally {
+						pm.close();
+					}
+				} else {
+					jsonResp = JsonRPCResponse.buildErrorResponse(0, "Word incorrect!");
 				}
 			}
 			

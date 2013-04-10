@@ -1,7 +1,11 @@
 package hm_model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.jdo.JDOException;
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -73,5 +77,38 @@ public class Word implements Serializable {
 	public Word(String body, String descr) {
 		this.body = body.toLowerCase();
 		this.descr = descr;
+	}
+	
+	public long getId() {
+		return this.id;
+	}
+	
+	@Override
+	public String toString() {
+		return this.body;
+	}
+	
+	public static Word getRandom(PersistenceManager pm) throws JDOException {
+		Word random = null;
+		Query q = pm.newQuery(Word.class);
+		q.setOrdering("id desc");
+		q.setRange(0,1);
+		try {
+			Word lastWord = ((List<Word>) q.execute()).get(0);
+			long lastIndex = lastWord.getId();
+			long randomIndex = Utils.getRandomInRange(0, lastIndex);
+			q = null;
+			
+			q = pm.newQuery(Word.class);
+			q.setFilter("id <= idParam");
+			q.declareParameters("long idParam");
+			q.setOrdering("id desc");
+			q.setRange(0, 10);
+			random = ((List<Word>) q.execute(randomIndex)).get(0);
+		} finally {
+			q.closeAll();
+			pm.close();
+		}
+		return random;
 	}
 }
