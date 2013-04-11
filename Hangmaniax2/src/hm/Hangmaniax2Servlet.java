@@ -3,6 +3,7 @@ package hm;
 import hm_model.Game;
 import hm_model.JsonRPCResponse;
 import hm_model.PMF;
+import hm_model.TurnOutcome;
 import hm_model.User;
 import hm_model.JsonRPCResponse.ErrorCode;
 import hm_model.Word;
@@ -93,34 +94,10 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			} else if (jsonReq.has("method") && "logout".equals(jsonReq.optString("method"))) {
 				req.getSession().invalidate();
 				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
-			} else if (jsonReq.has("method") && "checkSession".equals(jsonReq.optString("method"))) {
+			} else if (jsonReq.has("method") && "getActiveUser".equals(jsonReq.optString("method"))) {
 				HttpSession session = req.getSession();
 				
-				//TODO: test only
-				PersistenceManager pm = PMF.get().getPersistenceManager();
-				//Query q = pm.newQuery(Word.class);
-				/*
-				q.setFilter("id <= idParam");
-				q.declareParameters("long idParam");
-				q.setRange(0, 1);
-				*/
-				//q.setOrdering("id desc");
-				//q.setRange(0,1);
-				try {
-					//List<Word> words = (List<Word>) q.execute(6);
-					//List<Word> words = (List<Word>) q.execute();
-					//System.out.println(words.get(0));
-					Word rand = Word.getRandom(pm);
-					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': 'true', 'word': "+rand.toString()+"}");
-					System.out.println(rand);
-				} catch(JDOException e) {
-					jsonResp = JsonRPCResponse.buildErrorResponse(0, "Bad JDO!");
-				} finally {
-					//q.closeAll();
-					//pm.close();
-				}
-				
-				if (session != null && session.getAttribute("name") != null && session.getAttribute("score") != null) {
+				if (this.checkSession(session)) {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'name': '"+session.getAttribute("name")+"', 'score': '"+session.getAttribute("score")+"'}");
 				} else {
 					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': false}");
@@ -128,40 +105,52 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			} else if (jsonReq.has("method") && "startGame".equals(jsonReq.optString("method"))) {
 				HttpSession session = req.getSession();
 				if (session.getAttribute("email") != null) {
-					//TODO: Draw random word
+					PersistenceManager pm = PMF.get().getPersistenceManager();
 					String email = (String) session.getAttribute("email");
-					Word word = new Word("occurrence");
+					Word word = Word.getRandom(pm);
 					Game game = new Game(email, word);
-					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'length': 10}");
+					jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'length': "+word.toString().length()+"}");
 					session.setAttribute("game", game);
 				} else {
-					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "Invalid session!");
+					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "No user logged in!");
 				}
 			} else if (jsonReq.has("method") && "letterSubmit".equals(jsonReq.optString("method"))) {
-				
-				//TODO: obtain letter and and give it to the game instance
 				HttpSession session = req.getSession();
-				Game game = (Game) session.getAttribute("game");
-				System.out.print(session);
-				jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true}");
-				
-				//TODO: increment word's <code>played</code> field
-				if (game.isWin() || game.isLoss()) {
-					PersistenceManager pm = PMF.get().getPersistenceManager();
-					//TODO: increment word's <code>guessed</code> field
-					String playerEmail = game.getEmail();
-					try {
-						User player = pm.getObjectById(User.class, playerEmail);
-						if (game.isWin()) {
-							player.addPoints(game.getPointsForTheGame());
-						} else {
-							//TODO: act accordingly
+				if (this.checkSession(session)) {
+					PersistenceManager pm = null;
+					char letter = jsonReq.optString("letter").charAt(0);
+					Game game = (Game) session.getAttribute("game");
+					TurnOutcome outcome = game.turn(letter);
+					jsonResp = JsonRPCResponse.buildSuccessResponse(outcome.toJson());
+					
+					if (game.isWin() || game.isLoss()) {
+						try {
+							// We already need the word, so fetch it
+							pm = PMF.get().getPersistenceManager();
+							Word w = pm.getObjectById(Word.class, game.getWord());
+							
+							// Increment word's <code>played</code> field no matter of the result
+							w.justPlayed();
+							
+							if (game.isWin()) {
+								// We already need the player as well
+								User player = pm.getObjectById(User.class, game.getEmail());
+								player.addPoints(game.getPointsForTheGame());
+								w.justGuessed();
+								
+								//Build success response
+								jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'win': true}");
+							} else {
+								//TODO: grant points for asker, if there is one
+							}
+						} catch (JDOException e) {
+							jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
+						} finally {
+							pm.close();
 						}
-					} catch (JDOException e) {
-						jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
-					} finally {
-						pm.close();
 					}
+				} else {
+					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "No user logged in!");
 				}
 			} else if (jsonReq.has("method") && "wordSubmit".equals(jsonReq.optString("method"))) {
 				String word = jsonParams.optString("word");
@@ -188,5 +177,9 @@ public class Hangmaniax2Servlet extends HttpServlet {
 			wr.flush();
 			wr.close();
 		}
+	}
+	
+	private boolean checkSession(HttpSession session) {
+		return session != null && session.getAttribute("name") != null && session.getAttribute("score") != null;
 	}
 }

@@ -2,10 +2,11 @@ $('document').ready(function() {
 	$signupDialog = $('div#signupDialog');
 	$loginForm = $('form#loginForm');
 	$userDetails = $('div#userDetails');
+	$wordContainer = $('div#wordContainer');
 	
 	// Check for browser session.
 	// If not needed a simple refresh would serve as logout instead.
-	sendJsonRPC('checkSession', {}, function(resp) {
+	sendJsonRPC('getActiveUser', {}, function(resp) {
 		if (responseIsSuccessful(resp)) {
 			onLoginSucceeded(resp);
 		} else {
@@ -32,6 +33,8 @@ $('document').ready(function() {
 			}
 		}]
 	});
+	
+	$letterContainer = $('<div />').attr('class', 'letterContainer').html('&nbsp;');
 	
 	//handle POST submit from signIn form
 	$('form#loginForm').bind({
@@ -71,7 +74,8 @@ $('document').ready(function() {
 	$('div#letterBox a').bind({
 		'click': function(e) {
 			e.preventDefault();
-			sendJsonRPC('letterSubmit', {}, onLetterSubmitted);
+			var reqObj = {letter: $(this).text()};
+			sendJsonRPC('letterSubmit', reqObj, onLetterSubmitted);
 		}
 	});
 	
@@ -135,11 +139,25 @@ $('document').ready(function() {
 	};
 	
 	function onStartGame(resp) {
-		console.log(resp);
+		if (responseIsSuccessful(resp)) {
+			if (resp.result.length != undefined) {
+				var letterCount = resp.result.length;
+				//$wordContainer.children('a#startGame').hide();
+				for (var i=0; i<letterCount; i++) {
+					$wordContainer.append($letterContainer.clone());
+				}
+			}
+		} else {
+			showError(resp.error.message);
+		}
 	};
 	
 	function onLetterSubmitted(resp) {
-		console.log(resp);
+		if (responseIsSuccessful(resp)) {
+			//TODO: Implement
+		} else {
+			showError(resp.error.message);
+		}
 	};
 	
 	function onWordAdded(resp) {

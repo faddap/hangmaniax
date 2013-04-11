@@ -6,6 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.Iterator;
 
 public class Game implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1305780889427399438L;
 	private final static int MAX_TURNS = 7;
 	private final static int DEFAULT_POINTS = 30;
 	private final static int POINTS_WITH_DESCRIPTION = 10;
@@ -22,15 +26,13 @@ public class Game implements Serializable {
 	
 	public Game(String email, Word w) {
 		this.email = email;
-		
-		//TODO: init all needed variables using w
+		this.lettersLeft = w.toString().toCharArray();
 	}
 	
 	public Game(String email, Word w, String askedByEmail) {
 		this.email = email;
 		this.askerEmail = askedByEmail;
-		
-		//TODO: init all needed variables using w
+		this.lettersLeft = w.toString().toCharArray();
 	}
 	
 	public TurnOutcome turn(char letterSubmitted) {
@@ -51,7 +53,7 @@ public class Game implements Serializable {
 				this.lastOutcome = new TurnOutcome(ch.charValue(), false);
 			}
 		} else {
-			//submitted letter has been already present, so return an erroneous response
+			//submitted letter is present, so return an erroneous response
 			this.lastOutcome = new TurnOutcome(ch.charValue(), false);
 			this.lastOutcome.setErroneous();
 		}

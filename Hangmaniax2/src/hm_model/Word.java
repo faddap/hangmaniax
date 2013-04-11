@@ -103,12 +103,27 @@ public class Word implements Serializable {
 			q.setFilter("id <= idParam");
 			q.declareParameters("long idParam");
 			q.setOrdering("id desc");
-			q.setRange(0, 10);
-			random = ((List<Word>) q.execute(randomIndex)).get(0);
+			q.setRange(0, 50);
+			List<Word> matched = (List<Word>) q.execute(randomIndex);
+			if (!matched.isEmpty()) {
+				random = matched.get(0);
+			} else {
+				q.setFilter("id >= idParam");
+				matched = (List<Word>) q.execute(randomIndex);
+				random = matched.get(0);
+			}
 		} finally {
 			q.closeAll();
 			pm.close();
 		}
 		return random;
+	}
+	
+	public int justPlayed() {
+		return ++this.played;
+	}
+	
+	public int justGuessed() {
+		return ++this.guessed;
 	}
 }
