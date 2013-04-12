@@ -47,7 +47,7 @@ public class TurnOutcome implements Serializable {
 		JSONObject json = new JSONObject();
 		
 		json.put("hit", this.isSuccessful());
-		json.put("letter", this.letter);
+		json.put("letter", Character.toString(this.letter));
 		json.put("error", this.error);
 		
 		if (this.isSuccessful()) {

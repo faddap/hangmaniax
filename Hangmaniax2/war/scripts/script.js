@@ -154,7 +154,8 @@ $('document').ready(function() {
 	
 	function onLetterSubmitted(resp) {
 		if (responseIsSuccessful(resp)) {
-			//TODO: Implement
+			console.log(resp);
+			// TODO: Remove the letter from the 'keyboard' and display it at its corresponding positions.
 		} else {
 			showError(resp.error.message);
 		}

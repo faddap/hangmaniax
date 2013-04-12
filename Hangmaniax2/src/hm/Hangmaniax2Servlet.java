@@ -118,10 +118,10 @@ public class Hangmaniax2Servlet extends HttpServlet {
 				HttpSession session = req.getSession();
 				if (this.checkSession(session)) {
 					PersistenceManager pm = null;
-					char letter = jsonReq.optString("letter").charAt(0);
+					char letter = jsonParams.optString("letter").charAt(0);
 					Game game = (Game) session.getAttribute("game");
 					TurnOutcome outcome = game.turn(letter);
-					jsonResp = JsonRPCResponse.buildSuccessResponse(outcome.toJson());
+					JSONObject jsonOutcome = outcome.toJson();
 					
 					if (game.isWin() || game.isLoss()) {
 						try {
@@ -132,6 +132,7 @@ public class Hangmaniax2Servlet extends HttpServlet {
 							// Increment word's <code>played</code> field no matter of the result
 							w.justPlayed();
 							
+							//TODO: persist word (and user)
 							if (game.isWin()) {
 								// We already need the player as well
 								User player = pm.getObjectById(User.class, game.getEmail());
@@ -139,15 +140,28 @@ public class Hangmaniax2Servlet extends HttpServlet {
 								w.justGuessed();
 								
 								//Build success response
-								jsonResp = JsonRPCResponse.buildSuccessResponse("{'success': true, 'win': true}");
-							} else {
+								
+								jsonOutcome.put("gameStatus", "win");
+							} else if (game.isLoss()) {
+								jsonOutcome.put("gameStatus", "loss");
+								
 								//TODO: grant points for asker, if there is one
 							}
+							
+							jsonResp = JsonRPCResponse.buildSuccessResponse(jsonOutcome);
 						} catch (JDOException e) {
 							jsonResp = JsonRPCResponse.buildErrorResponse(0, e.getMessage());
 						} finally {
 							pm.close();
 						}
+					} else {
+						jsonOutcome.put("gameStatus", "in progress");
+					}
+					
+					if (jsonOutcome.has("error") && jsonOutcome.optBoolean("error")) {
+						jsonResp = JsonRPCResponse.buildErrorResponse(0, "This letter has been already entered!");
+					} else {
+						jsonResp = JsonRPCResponse.buildSuccessResponse(jsonOutcome);
 					}
 				} else {
 					jsonResp = JsonRPCResponse.buildErrorResponse(ErrorCode.SERVER_ERROR, "No user logged in!");

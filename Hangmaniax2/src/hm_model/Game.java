@@ -25,14 +25,18 @@ public class Game implements Serializable {
 	private LinkedHashSet<Character> lettersSubmitted = null;
 	
 	public Game(String email, Word w) {
+		this.word = w.toString();
 		this.email = email;
 		this.lettersLeft = w.toString().toCharArray();
+		this.lettersSubmitted = new LinkedHashSet<Character>();
 	}
 	
 	public Game(String email, Word w, String askedByEmail) {
+		this.word = w.toString();
 		this.email = email;
 		this.askerEmail = askedByEmail;
 		this.lettersLeft = w.toString().toCharArray();
+		this.lettersSubmitted = new LinkedHashSet<Character>();
 	}
 	
 	public TurnOutcome turn(char letterSubmitted) {
