@@ -2,10 +2,11 @@ $('document').ready(function() {
 	$signupDialog = $('div#signupDialog');
 	$loginForm = $('form#loginForm');
 	$userDetails = $('div#userDetails');
+	$wordContainer = $('div#wordContainer');
 	
 	// Check for browser session.
 	// If not needed a simple refresh would serve as logout instead.
-	sendJsonRPC('checkSession', {}, function(resp) {
+	sendJsonRPC('getActiveUser', {}, function(resp) {
 		if (responseIsSuccessful(resp)) {
 			onLoginSucceeded(resp);
 		} else {
@@ -33,6 +34,8 @@ $('document').ready(function() {
 		}]
 	});
 	
+	$letterContainer = $('<div />').attr('class', 'letterContainer').html('&nbsp;');
+	
 	//handle POST submit from signIn form
 	$('form#loginForm').bind({
 		'submit': function(e) {
@@ -56,6 +59,32 @@ $('document').ready(function() {
 		'click': function(e) {
 			e.preventDefault();
 			sendJsonRPC('logout', {}, onLogoutSucceeded);
+		}
+	});
+	
+	//handle game start
+	$('a#startGame').bind({
+		'click': function(e) {
+			e.preventDefault();
+			sendJsonRPC('startGame', {}, onStartGame);
+		}
+	});
+	
+	//handle letter submition
+	$('div#letterBox a').bind({
+		'click': function(e) {
+			e.preventDefault();
+			var reqObj = {letter: $(this).text()};
+			sendJsonRPC('letterSubmit', reqObj, onLetterSubmitted);
+		}
+	});
+	
+	//handle word input
+	$('form#wordInForm').bind({
+		'submit': function(e) {
+			e.preventDefault();
+			var reqObj = {word: this.word.value};
+			sendJsonRPC('wordSubmit', reqObj, onWordAdded);
 		}
 	});
 	
@@ -107,6 +136,33 @@ $('document').ready(function() {
 			$userDetails.hide();
 			$loginForm.show();
 		}
+	};
+	
+	function onStartGame(resp) {
+		if (responseIsSuccessful(resp)) {
+			if (resp.result.length != undefined) {
+				var letterCount = resp.result.length;
+				//$wordContainer.children('a#startGame').hide();
+				for (var i=0; i<letterCount; i++) {
+					$wordContainer.append($letterContainer.clone());
+				}
+			}
+		} else {
+			showError(resp.error.message);
+		}
+	};
+	
+	function onLetterSubmitted(resp) {
+		if (responseIsSuccessful(resp)) {
+			console.log(resp);
+			// TODO: Remove the letter from the 'keyboard' and display it at its corresponding positions.
+		} else {
+			showError(resp.error.message);
+		}
+	};
+	
+	function onWordAdded(resp) {
+		console.log(resp);
 	};
 	
 	function onAjaxError(data) {

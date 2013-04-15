@@ -28,6 +28,9 @@ public abstract class JsonRPCResponse {
 	
 	public static JSONObject buildSuccessResponse(JSONObject result) throws JSONException {
 		JSONObject resp = new JSONObject();
+		if (!result.has("success")) {
+			result.put("success", true);
+		}
 		resp.put("result", result);
 		return resp;
 	}

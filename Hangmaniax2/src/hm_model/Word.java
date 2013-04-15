@@ -1,5 +1,11 @@
 package hm_model;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.jdo.JDOException;
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -7,7 +13,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Word {
+public class Word implements Serializable {
 	/**
 	 * @author vatov
 	 */
@@ -17,18 +23,15 @@ public class Word {
 	public enum PartOfSpeech { NOUN, VERB, ADJECTIVE}
 	
 	/**
-	 * Primary key
+	 * ID
 	 */
-	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String encodedKey = null;
+	@Persistent(valueStrategy = IdGeneratorStrategy.SEQUENCE)
+	private long id;
 	
 	/**
 	 * The actual word
 	 */
-	@Persistent
-	@Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
+	@PrimaryKey
 	private String body = null;
 	
 	/**
@@ -67,7 +70,60 @@ public class Word {
 	@Persistent
 	private User user = null;
 	
-	public void setKey(String encodedKey) {
-		this.encodedKey = encodedKey;
+	public Word(String body) {
+		this.body = body.toLowerCase();
+	}
+	
+	public Word(String body, String descr) {
+		this.body = body.toLowerCase();
+		this.descr = descr;
+	}
+	
+	public long getId() {
+		return this.id;
+	}
+	
+	@Override
+	public String toString() {
+		return this.body;
+	}
+	
+	public static Word getRandom(PersistenceManager pm) throws JDOException {
+		Word random = null;
+		Query q = pm.newQuery(Word.class);
+		q.setOrdering("id desc");
+		q.setRange(0,1);
+		try {
+			Word lastWord = ((List<Word>) q.execute()).get(0);
+			long lastIndex = lastWord.getId();
+			long randomIndex = Utils.getRandomInRange(0, lastIndex);
+			q = null;
+			
+			q = pm.newQuery(Word.class);
+			q.setFilter("id <= idParam");
+			q.declareParameters("long idParam");
+			q.setOrdering("id desc");
+			q.setRange(0, 50);
+			List<Word> matched = (List<Word>) q.execute(randomIndex);
+			if (!matched.isEmpty()) {
+				random = matched.get(0);
+			} else {
+				q.setFilter("id >= idParam");
+				matched = (List<Word>) q.execute(randomIndex);
+				random = matched.get(0);
+			}
+		} finally {
+			q.closeAll();
+			pm.close();
+		}
+		return random;
+	}
+	
+	public int justPlayed() {
+		return ++this.played;
+	}
+	
+	public int justGuessed() {
+		return ++this.guessed;
 	}
 }

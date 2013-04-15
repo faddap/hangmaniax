@@ -59,6 +59,18 @@ header div#authBox input[type=submit] {
 }
 header div#authBox div#userDetails {
 	display: none;
+	padding-top: 25px;
+}
+header div#authBox div#userDetails span.username {
+	color: #DD0B00;
+}
+header  div#authBox div#userDetails span.score {
+	font-size: 1.1em;
+	color: #DD0B00;
+}
+header div#authBox div#userDetails a#logoutBtn {
+	text-decoration: none;
+	color: #017B86;
 }
 input.textFld {
 	display: block;
@@ -108,7 +120,7 @@ div#content div#leftColumn div#spanner {
 	height: 250px;
 }
 div#content div#leftColumn div#wordContainer {
-	
+	text-align: center;
 }
 div#content div#leftColumn div#wordContainer a#startGame {
 	display: block;
@@ -128,6 +140,15 @@ div#content div#leftColumn div#wordContainer a#startGame {
 	-moz-transition: background-color .5s; /* Firefox 4 */
 	-webkit-transition: background-color .5s; /* Safari and Chrome */
 	-o-transition: background-color .5s; /* Opera */
+}
+div#content div#leftColumn div#wordContainer div.letterContainer {
+	display: inline-block;
+	text-align: center;
+	padding: 5px;
+	border-bottom: 1px solid #DD0B00;
+	border-width: 0 0 3px 0;
+	width: 30px;
+	margin: 5px;
 }
 div#content div#rightColumn {
 	float: right;
