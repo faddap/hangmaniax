@@ -155,7 +155,12 @@ $('document').ready(function() {
 	function onLetterSubmitted(resp) {
 		if (responseIsSuccessful(resp)) {
 			console.log(resp);
-			// TODO: Remove the letter from the 'keyboard' and display it at its corresponding positions.
+			if(typeof resp.result.occurrences != 'undefined'){
+				for(var i = 0; i < resp.result.occurrences.length; i++){
+					var letter = $('.letterContainer:eq('+resp.result.occurrences[i]+')');
+					letter.html(resp.result.letter);
+				}
+			}
 		} else {
 			showError(resp.error.message);
 		}

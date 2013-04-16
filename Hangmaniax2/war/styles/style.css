@@ -143,6 +143,11 @@ div#content div#leftColumn div#wordContainer a#startGame {
 }
 div#content div#leftColumn div#wordContainer div.letterContainer {
 	display: inline-block;
+	color: #017B86;
+	font-weight: 900;
+	font-size: 1.3em;
+	text-decoration: none;
+	text-transform: uppercase;
 	text-align: center;
 	padding: 5px;
 	border-bottom: 1px solid #DD0B00;
