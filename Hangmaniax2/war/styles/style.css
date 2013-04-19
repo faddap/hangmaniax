@@ -158,12 +158,13 @@ div#content div#leftColumn div#wordContainer div.letterContainer {
 div#content div#rightColumn {
 	float: right;
 	vertical-align: top;
+	height: 450px;
 }
 div#content div#rightColumn form {
 	margin: 10px;
 }
 div#content div#rightColumn canvas#hangmann {
-	border: 1px solid #DD0B00;
+	border: 0px solid #DD0B00;
 }
 
 .keyboardKeyDown{

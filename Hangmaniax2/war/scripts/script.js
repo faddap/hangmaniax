@@ -3,6 +3,7 @@ $('document').ready(function() {
 	$loginForm = $('form#loginForm');
 	$userDetails = $('div#userDetails');
 	$wordContainer = $('div#wordContainer');
+	$tries = 7;
 	
 	// Check for browser session.
 	// If not needed a simple refresh would serve as logout instead.
@@ -140,9 +141,10 @@ $('document').ready(function() {
 	
 	function onStartGame(resp) {
 		if (responseIsSuccessful(resp)) {
+			$tries = 7;
 			if (resp.result.length != undefined) {
 				var letterCount = resp.result.length;
-				//$wordContainer.children('a#startGame').hide();
+				$wordContainer.children('a#startGame').hide();
 				for (var i=0; i<letterCount; i++) {
 					$wordContainer.append($letterContainer.clone());
 				}
@@ -155,16 +157,76 @@ $('document').ready(function() {
 	function onLetterSubmitted(resp) {
 		if (responseIsSuccessful(resp)) {
 			console.log(resp);
-			if(typeof resp.result.occurrences != 'undefined'){
+			if(typeof resp.result.occurrences != 'undefined' && resp.result.hit == true){
 				for(var i = 0; i < resp.result.occurrences.length; i++){
-					var letter = $('.letterContainer:eq('+resp.result.occurrences[i]+')');
-					letter.html(resp.result.letter);
+					var $letter = $('.letterContainer:eq('+resp.result.occurrences[i]+')');
+					$letter.html(resp.result.letter);
 				}
+			} else if(resp.result.gameStatus == 'in progress' || resp.result.gameStatus == 'loss'){
+				$tries--;
+				drawHangman($tries);
+			} else if(resp.result.gameStatus == 'win'){
+				showError('W');
 			}
 		} else {
 			showError(resp.error.message);
 		}
 	};
+	
+	function drawHangman($tries){
+		var canvas = document.getElementById('hangmann');
+		var ctx = canvas.getContext('2d');
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = '#017B86';
+		switch($tries)
+		{
+		case 6:
+			ctx.beginPath();
+			ctx.moveTo(290, 380);
+			ctx.lineTo(290, 20);
+			ctx.stroke();
+			break;
+		case 5:
+			ctx.beginPath();
+			ctx.moveTo(290, 20);
+			ctx.lineTo(30, 20);
+			ctx.stroke();
+			break;
+		case 4:
+			ctx.beginPath();
+			ctx.arc(160, 125, 35, 0, 2 * Math.PI, false);
+			ctx.stroke();
+			break;
+		case 3:
+			ctx.beginPath();
+			ctx.moveTo(160, 160);
+			ctx.lineTo(160, 260);
+			ctx.lineTo(100, 320);
+			ctx.moveTo(160, 260);
+			ctx.lineTo(220, 320);
+			ctx.stroke();
+			break;
+		case 2:
+			ctx.beginPath();
+			ctx.moveTo(160, 200);
+			ctx.lineTo(100, 110);
+			ctx.stroke();
+			break;
+		case 1:
+			ctx.beginPath();
+			ctx.moveTo(160, 200);
+			ctx.lineTo(220, 110);
+			ctx.stroke();
+			break;
+		case 0:
+			ctx.beginPath();
+			ctx.moveTo(160, 20);
+			ctx.lineTo(160, 90);
+			ctx.stroke();
+			showError('L');
+			break;
+		}
+	}
 	
 	function onWordAdded(resp) {
 		console.log(resp);
