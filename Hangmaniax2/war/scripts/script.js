@@ -268,7 +268,7 @@ $('document').ready(function() {
 	};
 	
 	function showResult(resultMsg) {
-		$resultDialog.css({'text-align': 'center', 'color': '#DD0B00', 'font-size': '50px', 'font-wight': '900'});
+		$resultDialog.css({'text-align': 'center', 'color': '#DD0B00', 'font-size': '80px', 'font-weight': '900'});
 		$resultDialog.text(resultMsg).dialog('open');
 	};
 	
